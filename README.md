@@ -1,2 +1,2 @@
 # CoffeeS
-A coffee shops recommendation app that knows you well
+A coffeeshops recommendation app that knows you well
