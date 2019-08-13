@@ -37,20 +37,42 @@ export default class Register extends React.Component {
 
                     <TouchableOpacity style={styles.formButton}
                         onPress={() => {
-                            Alert.alert(
-                                'Got a minute to complete your coffee profile?',
-                                ':)',
-                                [
-                                    { text: 'Ask me later', onPress: () => this.props.navigation.navigate("Login") },
-                                    // {
-                                    //     text: 'Cancel',
-                                    //     onPress: () => console.log('Cancel Pressed'),
-                                    //     style: 'cancel',
-                                    // },
-                                    { text: 'OK, I will do it now', onPress: () => this.props.navigation.navigate("Questionary") },
-                                ],
-                                { cancelable: false },
-                            );
+                            fetch("http://192.168.1.79:5000/register", {
+                                method: "POST",
+                                redirect: "follow",
+                                credentials: "include",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    username: this.state.username,
+                                    email: this.state.email,
+                                    password: this.state.password
+                                })
+                            }).then(resp => resp.json()).then(
+                                resp => {
+                                    console.log(resp);
+                                    if (resp._id) {
+                                        Alert.alert(
+                                            'Welcome!',
+                                            'Got a minute to complete your coffee profile? :)',
+                                            [
+                                                { text: 'Ask me later', onPress: () => this.props.navigation.navigate("Login") },
+                                                { text: 'OK, I will do it now', onPress: () => this.props.navigation.navigate("Questionary") },
+                                            ],
+                                            { cancelable: false },
+                                        );
+
+                                    } else {
+                                        alert("User validation failed");
+                                    }
+
+                                }
+                            ).catch(err => {
+                                console.log(err);
+                            })
+
+
                         }}>
 
                         <Text>Register</Text>

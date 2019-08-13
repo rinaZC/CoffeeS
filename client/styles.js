@@ -38,7 +38,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
     padding: 10
 
+  },
+  //questionary
+  questionaryView: {
+    paddingTop: 20,
+    paddingBottom: 20
+  },
+  picker: { width: 200, height: 50 },
+  pickerItem: { height: 50 },
+  questionaryBody: {
+    paddingBottom: 10
   }
+
 
 });
 

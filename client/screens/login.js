@@ -32,7 +32,37 @@ class Login extends React.Component {
                         placeholder="password" value={this.state.password}
                         onChangeText={(text) => { this.setState({ password: text }) }} />
 
-                    <TouchableOpacity style={styles.formButton}>
+                    <TouchableOpacity style={styles.formButton}
+                        onPress={() => {
+                            fetch("http://192.168.1.79:5000/login", {
+                                method: "POST",
+                                redirect: "follow",
+                                credentials: "include",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    username: this.state.username,
+                                    password: this.state.password
+                                })
+                            }).then(
+                                resp => {
+
+                                    return resp.json();
+                                }
+                            ).then(
+                                resp => {
+                                    console.log(resp);
+                                    this.props.navigation.navigate("Main");
+                                }
+
+                            ).catch(
+                                err => {
+                                    console.log(err);
+                                    alert("Incorrect username or password:(")
+                                }
+                            )
+                        }}>
                         <Text>Login</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {
