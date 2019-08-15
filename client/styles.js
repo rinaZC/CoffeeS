@@ -10,10 +10,20 @@ const styles = StyleSheet.create({
     //flex: 1
 
   },
+  mainContainer: {
+
+  },
+  mapContainer: {
+
+    width: '100%',
+    height: "90%"
+
+  },
   title: {
     marginBottom: 20,
     color: "brown",
-    fontSize: 35
+    fontSize: 35,
+    textAlign: "center"
   },
   formField: {
     display: "flex"
@@ -34,6 +44,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: 200,
 
+
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
     padding: 10
@@ -41,13 +52,18 @@ const styles = StyleSheet.create({
   },
   //questionary
   questionaryView: {
+    marginRight: 20,
+    marginLeft: 20,
     paddingTop: 20,
     paddingBottom: 20
   },
-  picker: { width: 200, height: 50 },
+  picker: { width: 200 },
   pickerItem: { height: 50 },
   questionaryBody: {
-    paddingBottom: 10
+    fontSize: 20,
+    paddingBottom: 10,
+    textAlign: "left",
+
   }
 
 

@@ -72,5 +72,27 @@ module.exports = (passport) => {
         res.send("logout")
     })
 
+    router.post("/createCoffeeProfile", (req, res) => {
+        let newProfile = new CoffeeProfile({
+            owner: req.body.userID,
+            coffeeShops: req.body.coffeeshops,
+            blackMilk: req.body.blackMilk,
+            sugar: req.body.sugar,
+            stayTogo: req.body.stayTogo,
+            coffeeBeans: req.body.bean,
+            acidity: req.body.acidity,
+            body: req.body.body,
+            aroma: req.body.aroma,
+            favDrink: req.body.favDrink
+        });
+        newProfile.save().then(resp => {
+            console.log(resp);
+            res.send(resp);
+        }).catch(err => {
+            console.log(err);
+            res.send(err);
+        })
+    })
+
     return router;
 }
