@@ -23,8 +23,43 @@ const UserSchema = new mongoose.Schema({
 
 const CoffeeProfileSchema = new mongoose.Schema({
     owner: {
+        required: true,
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+    },
+    coffeeShops: {
+        type: Array
+
+    },
+    blackMilk: {
+        type: String,
+        enum: ["milk", "black", "both"]
+    },
+    sugar: {
+        type: Boolean
+    },
+    stayTogo: {
+        type: String,
+        enum: ["stay", "togo", "both"]
+    },
+    coffeeBeans: {
+        type: String,
+        enum: ["light", "medium", "dark"]
+    },
+    body: {
+        type: String,
+        enum: ["dull", "medium", "lively"]
+    },
+    acidity: {
+        type: String,
+        enum: ["light", "heavy"]
+    },
+    aroma: {
+        type: String,
+        enum: ["floweryFruity", "nuttySmoky"]
+    },
+    favDrink: {
+        type: String
     }
 
 });

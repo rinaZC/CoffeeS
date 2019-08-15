@@ -15,7 +15,7 @@ const AppNavigator = createStackNavigator({
 
 },
   {
-    initialRouteName: "Questionary"
+    initialRouteName: "Main"
   }
 );
 

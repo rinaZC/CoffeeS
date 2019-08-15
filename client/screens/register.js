@@ -14,8 +14,6 @@ export default class Register extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text>Register page includes questionary</Text>
-
                 <Text style={styles.title}>Register Page</Text>
                 {/* <Text style={styles.title}>What's up, coffee lover?</Text> */}
 
@@ -58,7 +56,7 @@ export default class Register extends React.Component {
                                             'Got a minute to complete your coffee profile? :)',
                                             [
                                                 { text: 'Ask me later', onPress: () => this.props.navigation.navigate("Login") },
-                                                { text: 'OK, I will do it now', onPress: () => this.props.navigation.navigate("Questionary") },
+                                                { text: 'OK, I will do it now', onPress: () => this.props.navigation.navigate("Questionary", { userID: resp._id }) },
                                             ],
                                             { cancelable: false },
                                         );
