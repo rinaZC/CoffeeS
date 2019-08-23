@@ -80,7 +80,7 @@ export default class Main extends React.Component {
         //console.log("key", process.env.GOOGLEMAPS_API_KEY);
         let newArr = this.state.places;
         this.state.coffeeShops.forEach((c) => {
-            fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.location.coords.latitude},${this.state.location.coords.longitude}&radius=400&keyword=${c}&key=${process.env.GoogleAPIKEY}`, {
+            fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.location.coords.latitude},${this.state.location.coords.longitude}&radius=400&keyword=${c}&key=${process.env.GOOGLEMAPS_API_KEY}`, {
                 methos: "GET",
                 credentials: "include",
                 headers: {
