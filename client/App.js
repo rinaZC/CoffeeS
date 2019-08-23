@@ -6,16 +6,24 @@ import Login from "./screens/login";
 import Register from "./screens/register";
 import Main from "./screens/main";
 import Questionary from "./screens/questionary";
+import UpdateProfile from "./screens/updateProfile";
+import ManageReview from "./screens/manageReviews";
+import Wishlist from "./screens/wishList";
+
 
 const AppNavigator = createStackNavigator({
   Login: Login,
   Register: Register,
   Main: Main,
-  Questionary: Questionary
+  Questionary: Questionary,
+  UpdateProfile: UpdateProfile,
+  ManageReview: ManageReview,
+  Wishlist: Wishlist
+
 
 },
   {
-    initialRouteName: "Main"
+    initialRouteName: "Login"
   }
 );
 

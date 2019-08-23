@@ -10,7 +10,7 @@ const session = require("express-session");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(express.static("public"));
+app.use(express.static("uploads"));
 app.use(
     session({
         secret: process.env.EXPRESS_SECRET

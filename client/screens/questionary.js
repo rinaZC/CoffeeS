@@ -11,47 +11,48 @@ export default class Questionary extends React.Component {
 
     static navigationOptions = ({ navigation, screenProps }) => ({
         title: "Complete Your Profile",
-        headerLeft: <Button title="Login" onPress={() => { navigation.navigate('Login'); }} />,
+        // headerRight: <Button title="Login" onPress={() => { navigation.navigate('Login'); }} />,
     });
     constructor(props) {
         super(props);
         this.state = {
             coffeeShops: [],
-            milk: null,
-            sugar: null,
-            stay: null,
+            milk: "milk",
+            sugar: true,
+            stay: "stay",
             more: false,
-            bean: null,
-            acidity: null,
-            body: null,
-            aroma: null,
-            favDrink: null
+            bean: "light",
+            acidity: "dull",
+            body: "light",
+            aroma: "floweryFruity",
+            favDrink: null,
+            new: true
 
 
         };
         items = [{
-            id: '92iijs7yta',
+            id: 'Starbucks',
             name: 'Starbucks',
         }, {
-            id: 'a0s0a8ssbsd',
+            id: 'Think Coffee',
             name: 'Think Coffee',
         }, {
-            id: '16hbajsabsd',
+            id: 'Birch Coffee',
             name: 'Birch Coffee',
         }, {
-            id: '667atsas',
+            id: 'Gregorys Coffee',
             name: 'Gregorys Coffee',
         }, {
-            id: 'hsyasajs',
+            id: 'Stumptown',
             name: 'Stumptown',
         }, {
-            id: 'djsjudksjd',
+            id: 'Joe Coffee Company',
             name: 'Joe Coffee Company',
         }, {
-            id: 'sdhyaysdj',
+            id: 'Culture Espresso',
             name: 'Culture Espresso',
         }, {
-            id: 'suudydjsjd',
+            id: 'Bluestone Lane',
             name: 'Bluestone Lane',
         }];
 
@@ -65,8 +66,55 @@ export default class Questionary extends React.Component {
 
 
     onSelectedItemsChange = coffeeShops => {
+        console.log("something went wrong here", coffeeShops);
+        console.log(this.state.coffeeShops)
+
         this.setState({ coffeeShops });
+
     };
+
+    componentDidMount() {
+        fetch("http://192.168.1.79:5000/getProfile", {
+            method: "GET",
+            credentials: "include",
+            redirect: "follow",
+            headers: {
+                "Content-Type": "application/json"
+            }
+
+        }).then(resp => {
+
+            return resp.json();
+
+        })
+            .then(resp => {
+                if (resp.new == "new") {
+
+                } else if (resp.new == "false") {
+                    this.setState({
+                        new: false
+                    })
+
+                } else {
+                    console.log(resp);
+                    this.setState({
+                        coffeeShops: resp.coffeeShops,
+                        milk: resp.blackMilk,
+                        sugar: resp.sugar,
+                        stay: resp.stayTogo,
+                        bean: resp.coffeeBeans,
+                        acidity: resp.acidity,
+                        body: resp.body,
+                        aroma: resp.aroma,
+                        favDrink: resp.favDrink,
+                        new: false
+                    })
+
+
+                }
+
+            })
+    }
 
 
 
@@ -78,8 +126,8 @@ export default class Questionary extends React.Component {
                 style={{ flex: 1 }}
 
                 scrollEnabled={true}>
-                <View >
-                    <Text style={styles.title}>Questionary</Text>
+                <View style={{ paddingVertical: 20 }}>
+                    <Text style={styles.ttitle}>Questionary</Text>
                     <View style={styles.questionaryView}>
                         <Text style={styles.questionaryBody}>1. Frequent Coffee Shops</Text>
                         <View >
@@ -202,9 +250,9 @@ export default class Questionary extends React.Component {
                                     onValueChange={(itemValue, itemIndex) =>
                                         this.setState({ body: itemValue })
                                     }>
-                                    <Picker.Item label="Dull" value={"dull"} />
-                                    <Picker.Item label="Medium" value={"medium"} />
-                                    <Picker.Item label="Lively" value={"lively"} />
+                                    <Picker.Item label="Light" value={"light"} />
+                                    <Picker.Item label="Heavy" value={"heavy"} />
+
                                 </Picker>
                             </View>
                             <View style={styles.questionaryView}>
@@ -216,8 +264,10 @@ export default class Questionary extends React.Component {
                                     onValueChange={(itemValue, itemIndex) =>
                                         this.setState({ acidity: itemValue })
                                     }>
-                                    <Picker.Item label="Low Acidity" value={"light"} />
-                                    <Picker.Item label="High Acidity" value={"heavy"} />
+                                    <Picker.Item label="Dull" value={"dull"} />
+                                    <Picker.Item label="Medium" value={"medium"} />
+                                    <Picker.Item label="Lively" value={"lively"} />
+
 
                                 </Picker>
                             </View>
@@ -250,57 +300,138 @@ export default class Questionary extends React.Component {
 
 
                     <View style={styles.questionaryView}>
-                        <TouchableOpacity style={styles.formButton}
-                            onPress={() => {
-                                //save it with fetch
-                                let userID = this.props.navigation.state.params.userID;
-                                fetch("http://192.168.1.79:5000/createCoffeeProfile", {
-                                    method: "POST",
-                                    redirect: "follow",
-                                    credentials: "include",
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-                                    body: JSON.stringify({
-                                        userID: userID,
-                                        coffeeShops: this.state.coffeeShops,
-                                        blackMilk: this.state.milk,
-                                        sugar: this.state.sugar,
-                                        stayTogo: this.state.stay,
-                                        bean: this.state.bean,
-                                        acidity: this.state.acidity,
-                                        body: this.state.body,
-                                        aroma: this.state.aroma,
-                                        favDrink: this.state.favDrink
+                        {this.state.new
+                            ?
+                            <TouchableOpacity style={styles.formButton}
+                                onPress={() => {
+                                    //save it with fetch
+                                    let userID = this.props.navigation.state.params.userID;
+                                    fetch("http://192.168.1.79:5000/createCoffeeProfile", {
+                                        method: "POST",
+                                        redirect: "follow",
+                                        credentials: "include",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: this.state.more
+                                            ? JSON.stringify({
+                                                more: this.state.more,
+                                                userID: userID,
+                                                coffeeShops: this.state.coffeeShops,
+                                                blackMilk: this.state.milk,
+                                                sugar: this.state.sugar,
+                                                stayTogo: this.state.stay,
+                                                bean: this.state.bean,
+                                                acidity: this.state.acidity,
+                                                body: this.state.body,
+                                                aroma: this.state.aroma,
+                                                favDrink: this.state.favDrink
+                                            })
+                                            : JSON.stringify({
+                                                more: this.state.more,
+                                                userID: userID,
+                                                coffeeShops: this.state.coffeeShops,
+                                                blackMilk: this.state.milk,
+                                                sugar: this.state.sugar,
+                                                stayTogo: this.state.stay,
+
+                                            })
                                     })
-                                }).then(resp => {
-                                    console.log(resp);
-                                    return resp.json();
-                                }).then(resp => {
-                                    console.log(resp);
-                                    if (resp._id) {
-                                        Alert.alert(
-                                            'You are good to start your coffee journey right now',
-                                            ':) ',
-                                            [
-                                                { text: 'Log In', onPress: () => this.props.navigation.navigate("Login") }
+                                        .then(resp => {
+                                            console.log(resp);
+                                            return resp.json();
+                                        })
+                                        .then(resp => {
+                                            console.log(resp);
+                                            if (resp._id) {
+                                                Alert.alert(
+                                                    'You are good to start your coffee journey right now',
+                                                    ':) ',
+                                                    [
+                                                        { text: 'Log In', onPress: () => this.props.navigation.navigate("Login") }
 
-                                            ],
-                                            { cancelable: false },
-                                        );
-                                    } else {
-                                        alert("something went wrong:(")
+                                                    ],
+                                                    { cancelable: false },
+                                                );
+                                            } else {
+                                                alert("something went wrong:(")
 
-                                    }
-                                }).catch(err => {
-                                    console.log(err);
-                                    alert("something went wrong:(")
-                                })
+                                            }
+                                        }).catch(err => {
+                                            console.log(err);
+                                            alert("something went wrong:(")
+                                        })
 
 
 
-                            }}
-                        ><Text>Submit</Text></TouchableOpacity>
+                                }}
+                            ><Text>Submit</Text></TouchableOpacity>
+                            :
+                            <TouchableOpacity style={styles.formButton}
+                                onPress={() => {
+                                    //save it with fetch
+
+                                    fetch("http://192.168.1.79:5000/updateCoffeeProfile", {
+                                        method: "POST",
+                                        redirect: "follow",
+                                        credentials: "include",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: this.state.more
+                                            ? JSON.stringify({
+                                                more: this.state.more,
+                                                coffeeShops: this.state.coffeeShops,
+                                                blackMilk: this.state.milk,
+                                                sugar: this.state.sugar,
+                                                stayTogo: this.state.stay,
+                                                bean: this.state.bean,
+                                                acidity: this.state.acidity,
+                                                body: this.state.body,
+                                                aroma: this.state.aroma,
+                                                favDrink: this.state.favDrink
+                                            })
+                                            : JSON.stringify({
+                                                more: this.state.more,
+                                                coffeeShops: this.state.coffeeShops,
+                                                blackMilk: this.state.milk,
+                                                sugar: this.state.sugar,
+                                                stayTogo: this.state.stay,
+
+                                            })
+                                    })
+                                        .then(resp => {
+                                            console.log(resp);
+                                            return resp.json();
+                                        })
+                                        .then(resp => {
+                                            console.log(resp);
+                                            //console.log(resp.coffeeShops);
+                                            if (resp._id) {
+                                                Alert.alert(
+                                                    "Success!",
+                                                    "",
+                                                    [
+                                                        { text: 'Back to Main Page', onPress: () => this.props.navigation.navigate("Main") }
+
+                                                    ],
+                                                    { cancelable: false },
+                                                );
+                                            } else {
+                                                alert("something went wrong:(")
+
+                                            }
+                                        }).catch(err => {
+                                            console.log(err);
+                                            alert("something went wrong:(")
+                                        })
+
+
+
+                                }}
+                            ><Text>Submit</Text></TouchableOpacity>
+                        }
+
                     </View>
                 </View>
 

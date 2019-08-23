@@ -1,9 +1,13 @@
 const express = require("express");
 //importing from models
-const User = require("./modles").User;
-const CoffeeProfile = require("./modles").CoffeeProfile;
+const User = require("./model").User;
+const CoffeeProfile = require("./model").CoffeeProfile;
+const Review = require('./model').Review;
 const mongodb = require("mongodb");
 var CryptoJS = require("crypto-js");
+var multer = require('multer')
+var upload = multer({ dest: 'uploads/' })
+
 
 module.exports = (passport) => {
     const router = express.Router();
@@ -11,7 +15,8 @@ module.exports = (passport) => {
         let newUser = new User({
             username: req.body.username,
             email: req.body.email,
-            password: CryptoJS.AES.encrypt(req.body.password, process.env.PARSE_PHRASE)
+            password: CryptoJS.AES.encrypt(req.body.password, process.env.PARSE_PHRASE),
+            // profilePicture:
         });
         newUser.save().then(
 
@@ -73,25 +78,335 @@ module.exports = (passport) => {
     })
 
     router.post("/createCoffeeProfile", (req, res) => {
-        let newProfile = new CoffeeProfile({
-            owner: req.body.userID,
-            coffeeShops: req.body.coffeeshops,
-            blackMilk: req.body.blackMilk,
-            sugar: req.body.sugar,
-            stayTogo: req.body.stayTogo,
-            coffeeBeans: req.body.bean,
-            acidity: req.body.acidity,
-            body: req.body.body,
-            aroma: req.body.aroma,
-            favDrink: req.body.favDrink
-        });
+        let newProfile = req.body.more
+            ? new CoffeeProfile({
+                owner: req.body.userID,
+                coffeeShops: req.body.coffeeShops,
+                blackMilk: req.body.blackMilk,
+                sugar: req.body.sugar,
+                stayTogo: req.body.stayTogo,
+                coffeeBeans: req.body.bean,
+                acidity: req.body.acidity,
+                body: req.body.body,
+                aroma: req.body.aroma,
+                favDrink: req.body.favDrink
+            })
+            : new CoffeeProfile({
+                owner: req.body.userID,
+                coffeeShops: req.body.coffeeShops,
+                blackMilk: req.body.blackMilk,
+                sugar: req.body.sugar,
+                stayTogo: req.body.stayTogo,
+
+            });
         newProfile.save().then(resp => {
             console.log(resp);
-            res.send(resp);
+            User.findByIdAndUpdate(resp.owner, { coffeeProfile: resp._id }, function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    //console.log("RESULT: " + result);
+                    res.send(result);
+
+                }
+
+            });
+            //res.send(resp);
         }).catch(err => {
             console.log(err);
             res.send(err);
         })
+    });
+
+    router.get("/getProfile", (req, res) => {
+        if (!req.user) {
+            res.send({ new: "new" });
+        } else if (!req.user.coffeeProfile) {
+            res.send({ new: "false" });
+        } else {
+            CoffeeProfile.findOne({
+                owner: req.user._id
+            }, (err, profile) => {
+                if (err) {
+                    console.log(err);
+                    res.send(err);
+                } else {
+                    res.send(profile);
+                }
+            })
+        }
+
+
+
+    });
+
+    router.post("/updateCoffeeProfile", (req, res) => {
+        let data = req.body.more
+            ? {
+                owner: req.user._id,
+                coffeeShops: req.body.coffeeShops,
+                blackMilk: req.body.blackMilk,
+                sugar: req.body.sugar,
+                stayTogo: req.body.stayTogo,
+                coffeeBeans: req.body.bean,
+                acidity: req.body.acidity,
+                body: req.body.body,
+                aroma: req.body.aroma,
+                favDrink: req.body.favDrink
+            }
+            : {
+                owner: req.user._id,
+                coffeeShops: req.body.coffeeShops,
+                blackMilk: req.body.blackMilk,
+                sugar: req.body.sugar,
+                stayTogo: req.body.stayTogo,
+
+            };
+        if (req.user.coffeeProfile) {
+            CoffeeProfile.findOneAndUpdate({ owner: req.user._id },
+                data,
+                function (err, result) {
+                    if (!err) {
+                        res.send(result);
+                    } else {
+                        console.log(err);
+                        res.send(err);
+                    }
+                })
+
+        } else {
+            let newProfile = new CoffeeProfile(data);
+            newProfile.save().then(resp => {
+                console.log(resp);
+                User.findByIdAndUpdate(resp.owner, { coffeeProfile: resp._id }, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        //console.log("RESULT: " + result);
+                        res.send(result);
+
+                    }
+
+                });
+                //res.send(resp);
+            }).catch(err => {
+                console.log(err);
+                res.send(err);
+            })
+
+        }
+
+    });
+
+    router.post("/submitReview", upload.single('img'), (req, res) => {
+
+        User.findById(req.user.id)
+            .exec((err, user) => {
+                if (!err) {
+
+                    let newReview = new Review({
+                        user: user._id,
+                        like: 0,
+                        img: req.file.filename,
+                        coffeeShop: req.body.coffeeShop,
+                        order: req.body.order,
+                        content: req.body.content
+
+
+                    });
+                    newReview.save().then(resp => {
+                        console.log("review saved!", resp)
+                        res.send(resp)
+                    }).catch(err => {
+                        console.log(err);
+                        res.send(err);
+                    })
+
+                } else {
+                    console.log(err);
+
+                }
+            })
+
+
+
+
+
+
+    });
+
+
+
+    router.post("/uploadProfilePicture", upload.single('photo'), (req, res) => {
+        User.findByIdAndUpdate(req.user.id, { profilePicture: req.file.filename })
+            .exec((err, data) => {
+                if (!err) {
+                    console.log(data);
+                    res.send(data);
+                } else {
+                    console.log(err);
+                }
+            })
+
+    })
+    router.post("/submitQuote", (req, res) => {
+        User.findByIdAndUpdate(req.user.id, { quote: req.body.quote })
+            .exec((err, data) => {
+                if (!err) {
+                    console.log("submitQuote", data);
+                    res.send(data);
+                } else {
+                    console.log(err);
+                }
+            })
+
+    })
+
+    router.get("/getAllReviews", (req, res) => {
+        Review.find().populate("user").exec((err, data) => {
+            if (!err) {
+                console.log("reviews", data);
+                res.send(data.reverse());
+            } else {
+                console.log(err);
+                res.send(err);
+            }
+        })
+    })
+
+    router.get("/getUserReview", (req, res) => {
+        Review.find({ user: req.user.id }).populate("user").exec((err, data) => {
+            if (!err) {
+                console.log("user's reviews", data);
+                res.send(data);
+            } else {
+                console.log(err);
+                res.send(err);
+            }
+        })
+    })
+
+    router.post("/likeReview", (req, res) => {
+        Review.findByIdAndUpdate(req.body.id, { $inc: { like: 1 } })
+            .exec((err, data) => {
+                if (!err) {
+
+                    res.send(data);
+                } else {
+                    console.log(err);
+                }
+            })
+
+    })
+
+    router.post("/dislikeReview", (req, res) => {
+        Review.findByIdAndUpdate(req.body.id, { $inc: { like: -1 } })
+            .exec((err, data) => {
+                if (!err) {
+
+                    res.send(data);
+                } else {
+                    console.log(err);
+                }
+            })
+
+    })
+
+    router.post("/deleteReview", (req, res) => {
+        Review.findByIdAndDelete(req.body.id).exec((err, data) => {
+            if (!err) {
+
+                res.send(data);
+            } else {
+                console.log(err);
+            }
+
+        })
+    })
+
+    router.post("/addReviewtoList", (req, res) => {
+        User.findByIdAndUpdate(req.user.id, { $addToSet: { wishlist: req.body.id } }).exec(
+            (err, data) => {
+                if (!err) {
+                    res.send(data);
+                } else {
+                    console.log(err);
+                    res.send(err)
+                }
+            }
+        )
+    })
+
+    router.post("/removeReviewfromList", (req, res) => {
+        User.findByIdAndUpdate(req.user.id, { $pull: { wishlist: req.body.id } }).exec(
+            (err, data) => {
+                if (!err) {
+                    res.send(data);
+                } else {
+                    console.log(err);
+                    res.send(err)
+                }
+            }
+        )
+
+    })
+
+    router.get("/getSavedReviews", (req, res) => {
+        User.findById(req.user.id).exec((err, user) => {
+            if (!err) {
+
+                let result = [];
+                let count = 0;
+                if (user.wishlist.length == 0) {
+                    res.send({ result })
+                } else {
+                    user.wishlist.forEach(r => {
+                        Review.findById(r).populate("user").exec((err, data) => {
+                            if (!err) {
+                                if (data) {
+                                    result.push(data);
+                                    count++;
+
+                                } else {
+                                    count++;
+                                }
+
+
+                                if (count == user.wishlist.length) {
+                                    res.send({ result });
+
+                                }
+
+                            } else {
+                                console.log(err);
+                            }
+                        })
+                    });
+
+                }
+
+
+
+            } else {
+                console.log(err)
+                res.send(err);
+            }
+        })
+    })
+
+
+
+    router.get("/getUserInfo", (req, res) => {
+        User.findById(req.user.id)
+            .exec((err, user) => {
+                if (!err) {
+                    res.send(user);
+                } else {
+                    console.log(err);
+                    res.send(err);
+                }
+            })
+
     })
 
     return router;
