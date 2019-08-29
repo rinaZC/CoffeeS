@@ -200,7 +200,21 @@ export default class Questionary extends React.Component {
                         </Picker>
                     </View>
                     <View style={styles.questionaryView}>
-                        <Text style={styles.questionaryBody}>5.Do you wanna answer more questions?</Text>
+                        <Text style={styles.questionaryBody}>5.What kind of beans do you prefer?</Text>
+                        <Picker
+                            selectedValue={this.state.bean}
+                            style={styles.picker}
+                            itemStyle={styles.picker}
+                            onValueChange={(itemValue, itemIndex) =>
+                                this.setState({ bean: itemValue })
+                            }>
+                            <Picker.Item label="Light-roasted" value={"light"} />
+                            <Picker.Item label="Medium-roasted" value={"medium"} />
+                            <Picker.Item label="Dark-roasted" value={"dark"} />
+                        </Picker>
+                    </View>
+                    <View style={styles.questionaryView}>
+                        <Text style={styles.questionaryBody}>6.Do you wanna answer more questions?</Text>
 
 
                         <View>
@@ -227,20 +241,7 @@ export default class Questionary extends React.Component {
                     {this.state.more
                         ?
                         <View>
-                            <View style={styles.questionaryView}>
-                                <Text style={styles.questionaryBody}>6.What kind of beans do you prefer?</Text>
-                                <Picker
-                                    selectedValue={this.state.bean}
-                                    style={styles.picker}
-                                    itemStyle={styles.picker}
-                                    onValueChange={(itemValue, itemIndex) =>
-                                        this.setState({ bean: itemValue })
-                                    }>
-                                    <Picker.Item label="Light-roasted" value={"light"} />
-                                    <Picker.Item label="Medium-roasted" value={"medium"} />
-                                    <Picker.Item label="Dark-roasted" value={"dark"} />
-                                </Picker>
-                            </View>
+
                             <View style={styles.questionaryView}>
                                 <Text style={styles.questionaryBody}>7.What kind of coffee body do you prefer?</Text>
                                 <Picker

@@ -6,7 +6,8 @@ const Review = require('./model').Review;
 const mongodb = require("mongodb");
 var CryptoJS = require("crypto-js");
 var multer = require('multer')
-var upload = multer({ dest: 'uploads/' })
+var upload = multer({ dest: 'uploads/' });
+var rp = require('request-promise');
 
 
 module.exports = (passport) => {
@@ -242,7 +243,7 @@ module.exports = (passport) => {
             .exec((err, data) => {
                 if (!err) {
                     console.log(data);
-                    res.send(data);
+                    res.json({ profilePicture: req.file.filename });
                 } else {
                     console.log(err);
                 }
@@ -408,6 +409,249 @@ module.exports = (passport) => {
             })
 
     })
+
+    router.post("/getFrequentPlaces", (req, res) => {
+        console.log(req.body);
+        let newArr = [];
+        let count = 0;
+        req.body.coffeeShops.forEach((c) => {
+            rp(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.body.latitude},${req.body.longitude}&radius=400&keyword=${c}&key=${process.env.GOOGLEMAPS_API_KEY}`
+            )
+                .then(resp => {
+
+                    return JSON.parse(resp)
+                })
+
+                .then(resp => {
+
+                    console.log(resp.results);
+                    if (resp.results.length == 0) {
+                        res.send({ newArr: [] });
+                    } else {
+                        resp.results.forEach(r => {
+                            newArr.push({
+                                title: r.name,
+                                description: r.vicinity,
+                                coordinate: {
+                                    latitude: r.geometry.location.lat,
+                                    longitude: r.geometry.location.lng
+
+                                }
+                            });
+                            if (newArr.length === resp.results.length) {
+                                count++;
+                                if (count === req.body.coffeeShops.length) {
+                                    console.log(newArr);
+                                    res.send({ newArr })
+
+                                }
+                            }
+
+                        })
+
+                    }
+
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.send(err)
+                });
+
+
+
+        });
+
+
+
+
+    });
+
+    router.get("/getRecommendedPlaces", (req, res) => {
+        User.findById(req.user.id).populate("coffeeProfile").exec((err, data) => {
+            if (!err) {
+                console.log(data.coffeeProfile);
+                coffeeProfile = data.coffeeProfile;
+                if (coffeeProfile.coffeeBeans !== "dark" && coffeeProfile.stayTogo !== "stay") {
+                    //recommend champion and matto
+                    rp(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=mattoEspresso&inputtype=textquery&fields=name,geometry/location,formatted_address&locationbias=circle:500@40.754,-73.994584&key=${process.env.GOOGLEMAPS_API_KEY}`
+                    )
+                        .then(resp => {
+                            return JSON.parse(resp)
+                        })
+
+                        .then(resp => {
+                            let result = [];
+
+                            console.log(resp.candidates);
+                            let r = resp.candidates[0];
+                            result.push({
+                                title: r.name,
+                                description: r.formatted_address,
+                                coordinate: {
+                                    latitude: r.geometry.location.lat,
+                                    longitude: r.geometry.location.lng
+
+                                }
+
+                            });
+                            rp(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=ChampionCoffee&inputtype=textquery&fields=name,geometry/location,formatted_address&locationbias=circle:500@40.754,-73.994584&key=${process.env.GOOGLEMAPS_API_KEY}`
+                            )
+                                .then(resp => {
+                                    return JSON.parse(resp)
+                                })
+
+                                .then(resp => {
+
+
+                                    console.log(resp.candidates);
+                                    r = resp.candidates[0];
+                                    result.push({
+                                        title: r.name,
+                                        description: r.formatted_address,
+                                        coordinate: {
+                                            latitude: r.geometry.location.lat,
+                                            longitude: r.geometry.location.lng
+
+                                        }
+
+                                    });
+                                    res.send({ result });
+
+
+                                })
+
+
+                        })
+                } else if (coffeeProfile.coffeeBeans === "dark" && coffeeProfile.stayTogo !== "stay") {
+                    //recommend matto
+                    rp(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=RaminiEspressoBar&inputtype=textquery&fields=name,geometry/location,formatted_address&locationbias=circle:500@40.754,-73.994584&key=${process.env.GOOGLEMAPS_API_KEY}`
+                    )
+                        .then(resp => {
+                            return JSON.parse(resp)
+                        })
+
+                        .then(resp => {
+                            let result = [];
+
+                            console.log(resp.candidates);
+                            let r = resp.candidates[0];
+                            result.push({
+                                title: r.name,
+                                description: r.formatted_address,
+                                coordinate: {
+                                    latitude: r.geometry.location.lat,
+                                    longitude: r.geometry.location.lng
+
+                                }
+
+                            });
+                            rp(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=OptimisticCafe&inputtype=textquery&fields=name,geometry/location,formatted_address&locationbias=circle:500@40.754,-73.994584&key=${process.env.GOOGLEMAPS_API_KEY}`
+                            )
+                                .then(resp => {
+                                    return JSON.parse(resp)
+                                })
+
+                                .then(resp => {
+
+
+                                    console.log(resp.candidates);
+                                    r = resp.candidates[0];
+                                    result.push({
+                                        title: r.name,
+                                        description: r.formatted_address,
+                                        coordinate: {
+                                            latitude: r.geometry.location.lat,
+                                            longitude: r.geometry.location.lng
+
+                                        }
+
+                                    });
+                                    res.send({ result });
+
+
+                                })
+
+
+                        })
+
+
+                } else if (coffeeProfile.stayTogo === "stay") {
+                    //recommend The Bean
+                    rp(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=GregorysCoffee&inputtype=textquery&fields=name,geometry/location,formatted_address&locationbias=circle:500@40.754,-73.994584&key=${process.env.GOOGLEMAPS_API_KEY}`
+                    )
+                        .then(resp => {
+                            return JSON.parse(resp)
+                        })
+
+                        .then(resp => {
+                            let result = [];
+
+                            console.log(resp.candidates);
+                            let r = resp.candidates[0];
+                            result.push({
+                                title: r.name,
+                                description: r.formatted_address,
+                                coordinate: {
+                                    latitude: r.geometry.location.lat,
+                                    longitude: r.geometry.location.lng
+
+                                }
+
+                            });
+                            rp(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=CafeGrumpy&inputtype=textquery&fields=name,geometry/location,formatted_address&locationbias=circle:500@40.754,-73.994584&key=${process.env.GOOGLEMAPS_API_KEY}`
+                            )
+                                .then(resp => {
+                                    return JSON.parse(resp)
+                                })
+
+                                .then(resp => {
+
+
+                                    console.log(resp.candidates);
+                                    r = resp.candidates[0];
+                                    result.push({
+                                        title: r.name,
+                                        description: r.formatted_address,
+                                        coordinate: {
+                                            latitude: r.geometry.location.lat,
+                                            longitude: r.geometry.location.lng
+
+                                        }
+
+                                    });
+                                    res.send({ result });
+
+
+                                })
+
+
+                        })
+
+
+                } else {
+                    res.send({
+                        result: [
+
+
+                        ]
+                    })
+                }
+
+            } else {
+                console.log(err);
+            }
+
+        })
+
+
+
+
+    });
+
+
+
+
+
 
     return router;
 }

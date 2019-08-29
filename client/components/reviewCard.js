@@ -89,7 +89,7 @@ export default class ReviewCard extends React.Component {
         return (
             // <Container>
             //     <Content>
-            <Card style={{ width: 350, paddingHorizontal: 0 }}>
+            <Card style={{ width: 370, paddingHorizontal: 0, justifyContent: "center", alignContent: "center" }}>
                 <CardItem>
 
                     <Left>
@@ -111,18 +111,18 @@ export default class ReviewCard extends React.Component {
                         <View style={{ marginBottom: 15 }}>
                             <View style={{ flexDirection: "row" }}>
                                 <Text style={styles.cardBody}>Coffee shop : </Text>
-                                <Text style={styles.cBody}>{this.props.coffeeShop}</Text>
+                                <Text style={styles.cBody}> {this.props.coffeeShop}</Text>
                             </View>
                             <View style={{ flexDirection: "row" }}>
                                 <Text style={styles.cardBody}>Ordered : </Text>
-                                <Text style={styles.cBody}>{this.props.order}</Text>
+                                <Text style={styles.cBody}> {this.props.order}</Text>
                             </View>
 
 
 
 
                         </View>
-                        <View>
+                        <View style={{ paddingRight: 5 }}>
                             <Text style={styles.cardContent}>{this.props.content}</Text>
                         </View>
                     </View>

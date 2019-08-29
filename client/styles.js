@@ -286,8 +286,9 @@ const styles = StyleSheet.create({
 
   },
   cardContent: {
-    fontSize: 20,
-    fontFamily: "Cochin"
+    fontSize: 17,
+    fontFamily: "Cochin",
+
 
   }
 

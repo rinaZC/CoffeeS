@@ -6,7 +6,7 @@ import styles from "../styles";
 
 class Login extends React.Component {
     static navigationOptions = {
-        title: "Login",
+        title: "COFFEES",
         headerLeft: <View />
     };
     constructor(props) {

@@ -42,8 +42,8 @@ export default class Main extends React.Component {
             region: {
                 latitude: 37.78825,
                 longitude: -122.4324,
-                latitudeDelta: 0.00062,
-                longitudeDelta: 0.00091,
+                latitudeDelta: 0.0032,
+                longitudeDelta: 0.0061,
             },
             location: { coords: { latitude: 37.78825, longitude: -122.4324 } },
             modalOpen: false,
@@ -77,46 +77,28 @@ export default class Main extends React.Component {
 
     }
     fetchPlaces = () => {
-        //console.log("key", process.env.GOOGLEMAPS_API_KEY);
-        let newArr = this.state.places;
-        this.state.coffeeShops.forEach((c) => {
-            fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.location.coords.latitude},${this.state.location.coords.longitude}&radius=400&keyword=${c}&key=${process.env.GOOGLEMAPS_API_KEY}`, {
-                methos: "GET",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(resp => {
-                //console.log(resp);
-                return resp.json()
 
-            }).then(resp => {
-                console.log(resp);
+        fetch("http://192.168.1.79:5000/getFrequentPlaces", {
+            method: "POST",
+            redirect: "follow",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                latitude: this.state.location.coords.latitude,
+                longitude: this.state.location.coords.longitude,
+                coffeeShops: this.state.coffeeShops
 
-                resp.results.forEach(r => {
-                    newArr.push({
-                        title: r.name,
-                        description: r.vicinity,
-                        coordinate: {
-                            latitude: r.geometry.location.lat,
-                            longitude: r.geometry.location.lng
-
-                        }
-                    });
-
-                })
-                console.log("new array in fetchplaces", newArr)
-
-                this.setState({
-                    places: newArr
-                })
-
-            }).catch(err => {
-                console.log(err);
             })
+        }).then(resp => {
+            //console.log(resp);
+            return resp.json()
 
-        })
-        setTimeout(() => {
+        }).then(resp => {
+            console.log(resp);
+            let newArr = resp.newArr;
+            console.log("new array in fetchplaces", newArr)
             if (newArr.length === 0) {
                 Alert.alert("Oops! There is no your frequent coffee shop near you",
                     "Maybe try something new?",
@@ -133,11 +115,58 @@ export default class Main extends React.Component {
                     ],
                     { cancelable: false })
             }
-        }, 1500);
+
+            this.setState({
+                places: newArr
+            })
+
+
+        }).catch(err => {
+            console.log(err);
+        })
 
 
 
 
+
+
+
+
+    }
+
+    fetchRecommendedPlaces = () => {
+
+        fetch("http://192.168.1.79:5000/getRecommendedPlaces", {
+            method: "GET",
+            redirect: "follow",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(resp => {
+            //console.log(resp);
+            return resp.json()
+
+        }).then(resp => {
+            console.log(resp);
+            let newArr = resp.result;
+            console.log("new array in recommendplaces", newArr)
+            if (newArr.length === 0) {
+                alert("Sorry, we don't think there are any coffee shops near you that you will like");
+
+            } else {
+                this.setState({
+                    places: newArr
+                })
+
+            }
+
+
+
+
+        }).catch(err => {
+            console.log(err);
+        })
 
     }
 
@@ -245,6 +274,8 @@ export default class Main extends React.Component {
                                         <TouchableOpacity
                                             style={styles.modalButton}
                                             onPress={() => {
+                                                console.log("mode", this.state.newMode)
+                                                this.fetchRecommendedPlaces();
 
                                                 this.setState({
                                                     modalOpen: false
@@ -255,14 +286,15 @@ export default class Main extends React.Component {
                                         <TouchableOpacity
                                             style={styles.modalButton}
                                             onPress={() => {
+                                                console.log("mode", this.state.newMode)
                                                 this.fetchPlaces();
-                                                //console.log("places array", this.state.places)
                                                 this.setState({
                                                     modalOpen: false
                                                 })
                                             }}><Text style={styles.lable}>Find</Text></TouchableOpacity>}
                                     <TouchableOpacity style={styles.modalButton}
                                         onPress={() => {
+
                                             this.setState({
                                                 modalOpen: false
                                             })
@@ -282,8 +314,8 @@ export default class Main extends React.Component {
                         region={{
                             latitude: this.state.location.coords.latitude,
                             longitude: this.state.location.coords.longitude,
-                            latitudeDelta: 0.0062,
-                            longitudeDelta: 0.0091,
+                            latitudeDelta: 0.007,
+                            longitudeDelta: 0.018,
                         }} >
                         <MapView.Marker
                             coordinate={this.state.location.coords}
