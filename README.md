@@ -9,7 +9,7 @@ A coffee shops finding/recommendation app that knows you well, which also serves
 I am a huge coffee lover, but I find myself stop trying new coffee shops once I know a good one in the city. Also, I seldom meet people who are crazy about coffee as I do. So here comes CoffeeS, my problem solver.  :coffee:
 
 ## Features
-- [Questionary upon registering that collects data from users](https://pages.github.com/).
+- [Questionary upon registering that collects data from users](https://github.com/rinaZC/CoffeeS/blob/master/README.md#screenshots).
 
 ## Screenshots
 
