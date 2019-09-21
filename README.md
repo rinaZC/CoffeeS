@@ -1,9 +1,13 @@
 # CoffeeS
 A coffee shops finding/recommendation app that knows you well, which also serves as a platform for coffee lovers to find their communitiies and learn more about coffee.
 
-## Features
+![](https://recordit.co/6LpG7muu0F)
 
 ## Backstory
+
+## Features
+
+## Screenshots
 
 ## Technologies Used
 
