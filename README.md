@@ -1,7 +1,10 @@
 # CoffeeS
 A coffee shops finding/recommendation app that knows you well, which also serves as a platform for coffee lovers to find their communities and learn more about coffee. :heart:
 
-![](./mainscreen.png)
+
+<p align="center">
+  <img src="./mainscreen.png"/>
+</p>
 
 
 
@@ -20,6 +23,7 @@ I am a huge coffee lover, but I find myself stop trying new coffee shops once I 
   - "Stick to my habits" mode shows all your frequent coffee shops nearby. 
   
   ![](http://g.recordit.co/lMPV7B08FJ.gif)  
+  
   
   - "Try something new" mode recommends you coffee shops you don't frequent according to your coffee profile. 
   
