@@ -18,6 +18,8 @@ I am a huge coffee lover, but I find myself stop trying new coffee shops once I 
   ![](http://g.recordit.co/J9Gwe1fScb.gif)
 
 
+
+
 - Main page shows your location and help you find coffee shops near you: :star:
 
   - "Stick to my habits" mode shows all your frequent coffee shops nearby. 
@@ -30,14 +32,19 @@ I am a huge coffee lover, but I find myself stop trying new coffee shops once I 
   ![](http://g.recordit.co/wqJbRrUkHT.gif)
 
  
+ 
+ 
 - Classroom page is where you can find article resources about coffee. :school:
 
   ![](http://g.recordit.co/9FYlBYQvry.gif)
   
 
+
+
 - Community page is where you can post reviews about a coffee shop. You can also read, like, or save other people's reviews so you can visit those coffee shops later. :wink:
 
   ![](http://g.recordit.co/yKjUlpk3K7.gif)
+
 
 
 
