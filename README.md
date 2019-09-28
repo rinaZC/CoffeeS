@@ -1,5 +1,5 @@
 # CoffeeS
-A coffee shops finding/recommendation app that knows you well, which also serves as a platform for coffee lovers to find their communities and learn more about coffee. :heart:
+A coffee shops finding/recommendation app that knows you well, which also serves as a platform for coffee lovers to build their communities and learn more about coffee. :heart:
 
 
 <p align="center">
